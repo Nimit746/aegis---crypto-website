@@ -1,7 +1,0 @@
-{
-  "/page": "app/page.js",
-  "/market/page": "app/market/page.js",
-  "/ai-insights/page": "app/ai-insights/page.js",
-  "/support/page": "app/support/page.js",
-  "/alerts/page": "app/alerts/page.js"
-}
