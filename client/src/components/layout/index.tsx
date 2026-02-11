@@ -1,22 +1,43 @@
 ﻿"use client"
 
 import Sidebar from "./Sidebar";
-import { ReactNode } from "react";
+import { TopBar } from "./TopBar";
+import { ReactNode, useState, useEffect } from "react";
 
 export const Layout = ({ children }: { children: ReactNode }) => {
-  return (
-    <div className="min-h-screen flex">
-      {/* Fixed Sidebar */}
-      <Sidebar />
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-      {/* Main Content Area - with left margin for sidebar */}
-      <div className="flex-1 flex flex-col ml-64">
+  const [hasMounted, setHasMounted] = useState(false);
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
+  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+
+  if (!hasMounted) return null;
+
+  return (
+    <div className="min-h-screen flex bg-gray-950">
+      {/* Sidebar - Responsive Logic */}
+      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+
+      {/* Backdrop for mobile */}
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/60 z-40 lg:hidden backdrop-blur-sm transition-opacity"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
+      {/* Main Content Area - with left margin for sidebar on desktop */}
+      <div className="flex-1 flex flex-col min-w-0 lg:ml-64 transition-all">
         {/* Simple Top Bar */}
-        <div className="sticky top-0 z-40 border-b border-gray-800 bg-gray-900 p-4">
-          {/* Empty for now - you can add content here later */}
+        <div className="sticky top-0 z-30">
+          <TopBar onMenuClick={toggleSidebar} />
         </div>
-        
-        <main className="flex-1 overflow-y-auto bg-gray-950 p-6">
+
+        <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
           {children}
         </main>
       </div>

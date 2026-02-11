@@ -11,10 +11,16 @@ import {
   Bell,
   Settings,
   HelpCircle,
-  User
+  User,
+  X
 } from "lucide-react";
 
-const Sidebar = () => {
+interface SidebarProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   const pathname = usePathname();
 
   const navItems = [
@@ -41,9 +47,12 @@ const Sidebar = () => {
   }
 
   return (
-    <div className="fixed left-0 top-0 h-screen w-64 bg-gray-900 border-r border-gray-800 flex flex-col z-50">
+    <aside
+      className={`fixed inset-y-0 left-0 z-50 w-64 bg-gray-900 border-r border-gray-800 flex flex-col transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+        }`}
+    >
       {/* Logo Section - Glowing Shield */}
-      <div className="p-6 border-b border-gray-800">
+      <div className="p-6 border-b border-gray-800 flex items-center justify-between">
         <div className="flex items-center space-x-3">
           {/* Shield with Glow Effect */}
           <div className="relative group">
@@ -71,6 +80,14 @@ const Sidebar = () => {
             <p className="text-xs text-green-400">Intelligence Platform</p>
           </div>
         </div>
+
+        {/* Close Button Mobile */}
+        <button
+          onClick={onClose}
+          className="lg:hidden p-2 text-gray-400 hover:text-white transition-colors"
+        >
+          <X className="w-6 h-6" />
+        </button>
       </div>
 
       {/* Main Navigation - Green active states */}
@@ -87,6 +104,7 @@ const Sidebar = () => {
                 <Link
                   key={item.name}
                   href={item.href}
+                  onClick={() => { if (typeof window !== 'undefined' && window.innerWidth < 1024) onClose(); }}
                   className={`flex items-center p-3 rounded-lg transition-all group ${isActive
                     ? "bg-gray-800 text-green-400 border-l-4 border-green-500 shadow-lg shadow-green-500/10"
                     : "hover:bg-gray-800 text-gray-400 hover:text-gray-300"
@@ -116,6 +134,7 @@ const Sidebar = () => {
                 <Link
                   key={item.name}
                   href={item.href}
+                  onClick={() => { if (typeof window !== 'undefined' && window.innerWidth < 1024) onClose(); }}
                   className={`flex items-center p-3 rounded-lg transition-all group ${isActive
                     ? "bg-gray-800 text-green-400 border-l-4 border-green-500 shadow-lg shadow-green-500/10"
                     : "hover:bg-gray-800 text-gray-400 hover:text-gray-300"
@@ -148,7 +167,7 @@ const Sidebar = () => {
           </div>
         </div>
       </div>
-    </div>
+    </aside>
   );
 }
 

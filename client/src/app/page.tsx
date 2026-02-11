@@ -145,55 +145,43 @@ export default function Dashboard() {
 
         {/* Dashboard Header */}
         <div className="mb-8">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-              <div className="flex items-center gap-3 mb-2">
-                <div className="p-2 bg-linear-to-r from-green-500 to-emerald-500 rounded-lg">
-                  <Shield className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-2xl font-bold text-white">Aegis Crypto Intelligence</h1>
-                  <p className="text-gray-400">&quot;The most accurate AI predictions I&apos;ve seen in the crypto space.&quot;</p>
-                </div>
+          <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-6">
+            <div className="flex items-start gap-4">
+              <div className="p-3 bg-linear-to-r from-green-500 to-emerald-500 rounded-xl shrink-0">
+                <Shield className="w-8 h-8 text-white" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-white tracking-tight">Aegis Intelligence</h1>
+                <p className="text-sm text-gray-400 mt-1 max-w-md">&quot;The most accurate AI predictions for the crypto market.&quot;</p>
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+            <div className="flex flex-wrap items-center gap-4 bg-gray-900/50 p-3 rounded-xl border border-gray-800">
               <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2">
-                  <div className={`w-2 h-2 rounded-full ${marketData?.source === 'real' ? 'bg-green-400 animate-pulse' : 'bg-amber-400'}`}></div>
-                  <span className={`text-sm ${marketData?.source === 'real' ? 'text-green-400' : 'text-amber-400'}`}>
-                    {marketData?.source === 'real' ? 'Live Data' : 'Fallback Data'}
-                  </span>
-                </div>
+                <div className={`w-2 h-2 rounded-full ${marketData?.source === 'real' ? 'bg-green-400 animate-pulse' : 'bg-amber-400'}`}></div>
+                <span className={`text-xs font-bold uppercase tracking-wider ${marketData?.source === 'real' ? 'text-green-400' : 'text-amber-400'}`}>
+                  {marketData?.source === 'real' ? 'Live Feed' : 'Fallback'}
+                </span>
                 <button
                   onClick={fetchMarketData}
                   disabled={loading}
-                  className="flex items-center gap-2 text-sm text-gray-400 hover:text-white disabled:opacity-50"
+                  className="flex items-center gap-2 text-xs font-bold uppercase text-gray-400 hover:text-white transition-colors"
                 >
-                  <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-                  Refresh
+                  <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+                  Sync
                 </button>
               </div>
-              <div className="text-sm text-gray-400 flex items-center gap-2">
+              <div className="h-4 w-px bg-gray-800 hidden sm:block"></div>
+              <div className="text-xs font-bold uppercase text-gray-500 flex items-center gap-2">
                 <Clock className="w-4 h-4" />
-                Updated: {hasMounted ? lastUpdated : '--:--:--'}
+                {hasMounted ? lastUpdated : '--:--'}
               </div>
             </div>
           </div>
-
-          {error && (
-            <div className="mt-4 p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg">
-              <div className="flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 text-amber-400" />
-                <span className="text-sm text-amber-400">{error}</span>
-              </div>
-            </div>
-          )}
         </div>
 
-        {/* Market Overview Cards - Now with REAL data */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+        {/* Market Overview Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {/* BTC Card */}
           <div className="glass-card p-4">
             <div className="flex items-center justify-between mb-3">

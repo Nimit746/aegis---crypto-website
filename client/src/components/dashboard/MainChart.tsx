@@ -11,7 +11,9 @@ import {
   Title,
   Tooltip,
   Legend,
-  Filler
+  Filler,
+  ScriptableContext,
+  TooltipItem
 } from 'chart.js';
 import { Loader2, RefreshCw } from 'lucide-react';
 
@@ -82,11 +84,11 @@ export function MainChart() {
       setError(err instanceof Error ? err.message : 'Connection error');
     } finally {
       setLoading(false);
-      setHasMounted(true);
     }
   };
 
   useEffect(() => {
+    setHasMounted(true);
     fetchChartData(timeframe);
 
     // Auto-refresh every 30 seconds
@@ -146,7 +148,7 @@ export function MainChart() {
         label: 'BTC Price',
         data: chartData.data.map(point => point.price),
         borderColor: chartData.price_change_percent >= 0 ? '#10b981' : '#ef4444',
-        backgroundColor: (context) => {
+        backgroundColor: (context: ScriptableContext<'line'>) => {
           const chart = context.chart;
           const { ctx, chartArea } = chart;
 
@@ -171,7 +173,7 @@ export function MainChart() {
         pointHoverRadius: 6,
         fill: true,
         tension: 0.4,
-        cubicInterpolationMode: 'monotone',
+        cubicInterpolationMode: 'monotone' as const,
       }
     ]
   } : null;
@@ -192,8 +194,8 @@ export function MainChart() {
         padding: 12,
         displayColors: false,
         callbacks: {
-          label: (context: any) => {
-            return `Price: ${formatPrice(context.parsed.y)}`;
+          label: (context: TooltipItem<'line'>) => {
+            return `Price: ${formatPrice(context.parsed.y ?? 0)}`;
           }
         }
       }
@@ -208,8 +210,8 @@ export function MainChart() {
         grid: { color: 'rgba(75, 85, 99, 0.2)' },
         ticks: {
           color: '#9ca3af',
-          callback: (value: any) => {
-            if (value >= 1000) return `$${(value / 1000).toFixed(0)}k`;
+          callback: (value: string | number) => {
+            if (typeof value === 'number' && value >= 1000) return `$${(value / 1000).toFixed(0)}k`;
             return `$${value}`;
           }
         }
@@ -227,9 +229,9 @@ export function MainChart() {
             <span className="text-2xl font-bold">
               {chartData ? formatPrice(chartData.current_price) : '$0'}
             </span>
-            <span className={`px-2 py-1 rounded text-sm ${chartData?.price_change_percent >= 0
-                ? 'bg-green-500/20 text-green-400'
-                : 'bg-red-500/20 text-red-400'
+            <span className={`px-2 py-1 rounded text-sm ${(chartData?.price_change_percent ?? 0) >= 0
+              ? 'bg-green-500/20 text-green-400'
+              : 'bg-red-500/20 text-red-400'
               }`}>
               {chartData ? formatChange(chartData.price_change_percent) : '+0.00%'}
               {chartData?.price_change && ` (${formatPrice(chartData.price_change)})`}
@@ -254,8 +256,8 @@ export function MainChart() {
               key={btn.value}
               onClick={() => setTimeframe(btn.value)}
               className={`px-3 py-1 rounded-lg text-sm transition ${timeframe === btn.value
-                  ? 'bg-green-500 text-white shadow-lg shadow-green-500/20'
-                  : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                ? 'bg-green-500 text-white shadow-lg shadow-green-500/20'
+                : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
                 }`}
             >
               {btn.label}
@@ -287,7 +289,7 @@ export function MainChart() {
         </div>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
-            <div className={`w-3 h-3 rounded-full ${chartData?.price_change_percent >= 0 ? 'bg-green-400' : 'bg-red-400'
+            <div className={`w-3 h-3 rounded-full ${(chartData?.price_change_percent ?? 0) >= 0 ? 'bg-green-400' : 'bg-red-400'
               }`}></div>
             <span>24h Change: {chartData ? formatChange(chartData.price_change_percent) : '+0.00%'}</span>
           </div>

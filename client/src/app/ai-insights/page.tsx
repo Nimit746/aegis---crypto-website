@@ -63,11 +63,10 @@ export default function AIInsightsPage() {
             <div key={insight.id} className="glass-panel p-6">
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <span className={`px-2 py-1 rounded text-xs ${
-                    insight.impact === 'high' ? 'bg-red-500/20 text-red-400' :
-                    insight.impact === 'medium' ? 'bg-yellow-500/20 text-yellow-400' :
-                    'bg-green-500/20 text-green-400'
-                  }`}>
+                  <span className={`px-2 py-1 rounded text-xs ${insight.impact === 'high' ? 'bg-red-500/20 text-red-400' :
+                      insight.impact === 'medium' ? 'bg-yellow-500/20 text-yellow-400' :
+                        'bg-green-500/20 text-green-400'
+                    }`}>
                     {insight.impact.toUpperCase()} IMPACT
                   </span>
                   <div className="flex items-center gap-2 mt-2">
@@ -79,14 +78,14 @@ export default function AIInsightsPage() {
                     <h3 className="font-bold text-lg">{insight.title}</h3>
                   </div>
                 </div>
-                <div className="text-right">
+                <div className="text-right shrink-0">
                   <div className="text-2xl font-bold text-green-400">{insight.confidence}%</div>
-                  <div className="text-sm text-gray-400">Confidence</div>
+                  <div className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Confidence</div>
                 </div>
               </div>
-              
+
               <p className="text-gray-300 mb-4">{insight.description}</p>
-              
+
               <div className="flex items-center justify-between text-sm">
                 <div className="flex items-center gap-1 text-gray-400">
                   <Clock className="w-4 h-4" />
