@@ -3,8 +3,16 @@
 import { useState, useEffect } from "react";
 import { ArrowUp, ArrowDown, BarChart3, DollarSign, Activity, RefreshCw, PieChart } from "lucide-react";
 
+interface MarketData {
+  btc: { price: number; change: number; dominance: number };
+  eth: { price: number; change: number };
+  market_cap: number;
+  total_volume: number;
+  fear_greed: number;
+}
+
 export default function MarketPage() {
-  const [marketData, setMarketData] = useState<any>(null);
+  const [marketData, setMarketData] = useState<MarketData | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -68,7 +76,7 @@ export default function MarketPage() {
               </div>
             </div>
             <div className="flex items-center space-x-2">
-              <button 
+              <button
                 onClick={fetchMarketData}
                 disabled={refreshing}
                 className="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg flex items-center gap-2 disabled:opacity-50"
@@ -97,7 +105,7 @@ export default function MarketPage() {
             </div>
             <div className="mt-2 text-xs text-green-400">+2.1% today</div>
           </div>
-          
+
           <div className="glass-panel p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -110,7 +118,7 @@ export default function MarketPage() {
             </div>
             <div className="mt-2 text-xs text-green-400">+15% increase</div>
           </div>
-          
+
           <div className="glass-panel p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -123,7 +131,7 @@ export default function MarketPage() {
             </div>
             <div className="mt-2 text-xs text-green-400">Stable</div>
           </div>
-          
+
           <div className="glass-panel p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -152,9 +160,9 @@ export default function MarketPage() {
                   <p className="text-sm text-gray-400">BTC/USDT</p>
                 </div>
               </div>
-              <div className={`flex items-center ${marketData?.btc?.change >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                {marketData?.btc?.change >= 0 ? <ArrowUp className="w-4 h-4" /> : <ArrowDown className="w-4 h-4" />}
-                <span className="ml-1">{marketData?.btc?.change >= 0 ? '+' : ''}{marketData?.btc?.change || 2.41}%</span>
+              <div className={`flex items-center ${(marketData?.btc?.change ?? 0) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                {(marketData?.btc?.change ?? 0) >= 0 ? <ArrowUp className="w-4 h-4" /> : <ArrowDown className="w-4 h-4" />}
+                <span className="ml-1">{(marketData?.btc?.change ?? 0) >= 0 ? '+' : ''}{marketData?.btc?.change ?? 2.41}%</span>
               </div>
             </div>
             <div className="text-3xl font-bold mb-2">
@@ -175,9 +183,9 @@ export default function MarketPage() {
                   <p className="text-sm text-gray-400">ETH/USDT</p>
                 </div>
               </div>
-              <div className={`flex items-center ${marketData?.eth?.change >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                {marketData?.eth?.change >= 0 ? <ArrowUp className="w-4 h-4" /> : <ArrowDown className="w-4 h-4" />}
-                <span className="ml-1">{marketData?.eth?.change >= 0 ? '+' : ''}{marketData?.eth?.change || 1.80}%</span>
+              <div className={`flex items-center ${(marketData?.eth?.change ?? 0) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                {(marketData?.eth?.change ?? 0) >= 0 ? <ArrowUp className="w-4 h-4" /> : <ArrowDown className="w-4 h-4" />}
+                <span className="ml-1">{(marketData?.eth?.change ?? 0) >= 0 ? '+' : ''}{marketData?.eth?.change ?? 1.80}%</span>
               </div>
             </div>
             <div className="text-3xl font-bold mb-2">

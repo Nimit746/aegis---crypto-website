@@ -1,7 +1,7 @@
 ﻿"use client";
 
 import React, { useState } from 'react';
-import { Brain, TrendingUp, AlertTriangle, BarChart3, Clock, ArrowUpRight, ArrowDownRight, Search, Filter } from 'lucide-react';
+import { Brain, Clock, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 
 export default function AIInsightsPage() {
   const [insights] = useState([
@@ -64,8 +64,8 @@ export default function AIInsightsPage() {
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <span className={`px-2 py-1 rounded text-xs ${insight.impact === 'high' ? 'bg-red-500/20 text-red-400' :
-                      insight.impact === 'medium' ? 'bg-yellow-500/20 text-yellow-400' :
-                        'bg-green-500/20 text-green-400'
+                    insight.impact === 'medium' ? 'bg-yellow-500/20 text-yellow-400' :
+                      'bg-green-500/20 text-green-400'
                     }`}>
                     {insight.impact.toUpperCase()} IMPACT
                   </span>

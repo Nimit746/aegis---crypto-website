@@ -33,7 +33,7 @@ export default function SettingsPage() {
               <Bell className="w-5 h-5 text-yellow-400" />
               <h2 className="text-lg font-bold">Notification Settings</h2>
             </div>
-            
+
             <div className="space-y-4">
               {Object.entries(notifications).map(([key, value]) => (
                 <div key={key} className="flex items-center justify-between p-3 bg-gray-800/30 rounded-lg">
@@ -44,11 +44,11 @@ export default function SettingsPage() {
                     <p className="text-sm text-gray-400">Receive alerts for {key.replace(/([A-Z])/g, ' $1').toLowerCase()}</p>
                   </div>
                   <label className="relative inline-flex items-center cursor-pointer">
-                    <input 
-                      type="checkbox" 
-                      className="sr-only peer" 
+                    <input
+                      type="checkbox"
+                      className="sr-only peer"
                       checked={value}
-                      onChange={() => setNotifications(prev => ({...prev, [key]: !prev[key]}))}
+                      onChange={() => setNotifications(prev => ({ ...prev, [key]: !prev[key as keyof typeof notifications] }))}
                     />
                     <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
                   </label>
@@ -63,7 +63,7 @@ export default function SettingsPage() {
               <User className="w-5 h-5 text-green-400" />
               <h2 className="text-lg font-bold">Account Settings</h2>
             </div>
-            
+
             <div className="space-y-4">
               <div className="flex items-center justify-between p-3 bg-gray-800/30 rounded-lg">
                 <div>
@@ -74,7 +74,7 @@ export default function SettingsPage() {
                   Upgrade
                 </button>
               </div>
-              
+
               <div className="flex items-center justify-between p-3 bg-gray-800/30 rounded-lg">
                 <div>
                   <p className="font-medium">Email Notifications</p>
