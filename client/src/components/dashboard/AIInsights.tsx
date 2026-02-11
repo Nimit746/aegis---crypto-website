@@ -20,8 +20,16 @@ const AIInsights = () => {
     { id: 3, title: 'Market Sentiment', confidence: 65, impact: 'medium', time: '1h ago', signal: 'bullish' },
   ]);
 
+  const [hasMounted, setHasMounted] = useState(false);
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
+  if (!hasMounted) return <div className="animate-pulse h-48 bg-gray-900/50 rounded-lg"></div>;
+
   const getImpactColor = (impact: 'high' | 'medium' | 'low') => {
-    switch(impact) {
+    switch (impact) {
       case 'high': return 'bg-red-500/20 text-red-400';
       case 'medium': return 'bg-yellow-500/20 text-yellow-400';
       case 'low': return 'bg-green-500/20 text-green-400';
@@ -29,7 +37,7 @@ const AIInsights = () => {
   };
 
   const getSignalIcon = (signal: string) => {
-    switch(signal) {
+    switch (signal) {
       case 'bullish': return <ArrowUpRight className="w-3 h-3 text-green-400" />;
       case 'bearish': return <ArrowDownRight className="w-3 h-3 text-red-400" />;
       default: return <ArrowUpRight className="w-3 h-3 text-yellow-400" />;
@@ -51,7 +59,7 @@ const AIInsights = () => {
           <ChevronRight className="w-3 h-3 ml-1" />
         </Link>
       </div>
-      
+
       <div className="space-y-3">
         {insights.map((insight) => (
           <div key={insight.id} className="p-3 bg-gray-900/50 rounded-lg hover:bg-gray-800/50 transition">

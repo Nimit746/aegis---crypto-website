@@ -3,10 +3,10 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { 
-  Home, 
-  BarChart3, 
-  Brain, 
+import {
+  Home,
+  BarChart3,
+  Brain,
   Wallet,
   Bell,
   Settings,
@@ -30,6 +30,16 @@ const Sidebar = () => {
     { name: "Support", href: "/support", icon: HelpCircle },
   ];
 
+  const [hasMounted, setHasMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
+  if (!hasMounted) {
+    return <div className="fixed left-0 top-0 h-screen w-64 bg-gray-900 border-r border-gray-800 z-50 animate-pulse"></div>;
+  }
+
   return (
     <div className="fixed left-0 top-0 h-screen w-64 bg-gray-900 border-r border-gray-800 flex flex-col z-50">
       {/* Logo Section - Glowing Shield */}
@@ -38,24 +48,24 @@ const Sidebar = () => {
           {/* Shield with Glow Effect */}
           <div className="relative group">
             {/* Outer glow */}
-            <div className="absolute -inset-1 bg-gradient-to-r from-green-400 to-emerald-500 rounded-lg blur opacity-70 group-hover:opacity-100 transition duration-300"></div>
-            
+            <div className="absolute -inset-1 bg-linear-to-r from-green-400 to-emerald-500 rounded-lg blur opacity-70 group-hover:opacity-100 transition duration-300"></div>
+
             {/* Shield container */}
-            <div className="relative w-10 h-10 bg-gradient-to-br from-green-600 to-emerald-600 rounded-lg flex items-center justify-center shadow-xl shadow-green-500/40 ring-1 ring-green-400/30">
+            <div className="relative w-10 h-10 bg-linear-to-br from-green-600 to-emerald-600 rounded-lg flex items-center justify-center shadow-xl shadow-green-500/40 ring-1 ring-green-400/30">
               {/* Shield icon */}
-              <svg 
-                className="w-6 h-6 text-black" 
-                viewBox="0 0 24 24" 
+              <svg
+                className="w-6 h-6 text-black"
+                viewBox="0 0 24 24"
                 fill="currentColor"
               >
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
               </svg>
-              
+
               {/* Inner shine */}
-              <div className="absolute inset-0 rounded-lg bg-gradient-to-b from-white/20 to-transparent"></div>
+              <div className="absolute inset-0 rounded-lg bg-linear-to-b from-white/20 to-transparent"></div>
             </div>
           </div>
-          
+
           <div>
             <h1 className="text-xl font-bold text-white">Aegis Crypto</h1>
             <p className="text-xs text-green-400">Intelligence Platform</p>
@@ -77,11 +87,10 @@ const Sidebar = () => {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`flex items-center p-3 rounded-lg transition-all group ${
-                    isActive
-                      ? "bg-gray-800 text-green-400 border-l-4 border-green-500 shadow-lg shadow-green-500/10"
-                      : "hover:bg-gray-800 text-gray-400 hover:text-gray-300"
-                  }`}
+                  className={`flex items-center p-3 rounded-lg transition-all group ${isActive
+                    ? "bg-gray-800 text-green-400 border-l-4 border-green-500 shadow-lg shadow-green-500/10"
+                    : "hover:bg-gray-800 text-gray-400 hover:text-gray-300"
+                    }`}
                 >
                   <Icon className={`w-5 h-5 ${isActive ? "text-green-400" : "text-gray-500 group-hover:text-green-400"}`} />
                   <span className="ml-3 font-medium">{item.name}</span>
@@ -107,11 +116,10 @@ const Sidebar = () => {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`flex items-center p-3 rounded-lg transition-all group ${
-                    isActive
-                      ? "bg-gray-800 text-green-400 border-l-4 border-green-500 shadow-lg shadow-green-500/10"
-                      : "hover:bg-gray-800 text-gray-400 hover:text-gray-300"
-                  }`}
+                  className={`flex items-center p-3 rounded-lg transition-all group ${isActive
+                    ? "bg-gray-800 text-green-400 border-l-4 border-green-500 shadow-lg shadow-green-500/10"
+                    : "hover:bg-gray-800 text-gray-400 hover:text-gray-300"
+                    }`}
                 >
                   <Icon className={`w-5 h-5 ${isActive ? "text-green-400" : "text-gray-500 group-hover:text-green-400"}`} />
                   <span className="ml-3 font-medium">{item.name}</span>
@@ -126,7 +134,7 @@ const Sidebar = () => {
       <div className="p-4 border-t border-gray-800 mt-auto">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-400 rounded-full flex items-center justify-center shadow shadow-green-500/30">
+            <div className="w-8 h-8 bg-linear-to-br from-green-500 to-emerald-400 rounded-full flex items-center justify-center shadow shadow-green-500/30">
               <User className="w-4 h-4 text-white" />
             </div>
             <div>
@@ -142,6 +150,6 @@ const Sidebar = () => {
       </div>
     </div>
   );
-};
+}
 
 export default Sidebar;

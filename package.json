@@ -5,7 +5,7 @@
     "description": "Fullstack AI Story Scene Generator using MERN + FastAPI",
     "scripts": {
         "frontend": "cd client && npm run dev",
-        "ai": "cd server && uvicorn app:app --reload",
+        "ai": "cd server && uvicorn main:app --reload",
         "dev": "concurrently \"npm:frontend\" \"npm:ai\""
     },
     "devDependencies": {

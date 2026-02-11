@@ -26,6 +26,16 @@ export function OrderBook() {
     { price: 64251.60, amount: 1.320, total: 84.8 }
   ]);
 
+  const [hasMounted, setHasMounted] = useState(false);
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
+  if (!hasMounted) {
+    return <div className="animate-pulse h-64 bg-gray-900/50 rounded-lg"></div>;
+  }
+
   return (
     <div>
       {/* Header Stats */}
@@ -38,13 +48,13 @@ export function OrderBook() {
             +2.41% today
           </div>
         </div>
-        
+
         <div className="p-3 bg-gray-800/30 rounded-lg">
           <div className="text-xs text-gray-400 mb-1">Order Book Depth</div>
           <div className="text-xl font-bold text-white">$1.26B</div>
           <div className="text-xs text-gray-400 mt-1">Total liquidity</div>
         </div>
-        
+
         <div className="p-3 bg-gray-800/30 rounded-lg">
           <div className="text-xs text-gray-400 mb-1">Spread</div>
           <div className="text-xl font-bold text-yellow-400">2.16</div>
@@ -63,11 +73,11 @@ export function OrderBook() {
             </div>
             <div className="text-xs text-gray-400">Cumulative: $892.4M</div>
           </div>
-          
+
           <div className="space-y-2">
             {bids.map((bid, i) => (
-              <div 
-                key={i} 
+              <div
+                key={i}
                 className="grid grid-cols-4 p-3 bg-green-500/5 hover:bg-green-500/10 rounded-lg transition-colors group cursor-pointer"
               >
                 <div className="text-green-400 font-medium text-sm">
@@ -76,7 +86,7 @@ export function OrderBook() {
                 <div className="text-gray-300 text-sm text-center">{bid.amount.toFixed(3)} BTC</div>
                 <div className="text-gray-400 text-sm text-center">${bid.total}M</div>
                 <div className="text-right">
-                  <div 
+                  <div
                     className="h-2 bg-green-500/30 rounded-full"
                     style={{ width: `${(i + 1) * 12}%` }}
                   ></div>
@@ -95,11 +105,11 @@ export function OrderBook() {
             </div>
             <div className="text-xs text-gray-400">Cumulative: $974.8M</div>
           </div>
-          
+
           <div className="space-y-2">
             {asks.map((ask, i) => (
-              <div 
-                key={i} 
+              <div
+                key={i}
                 className="grid grid-cols-4 p-3 bg-red-500/5 hover:bg-red-500/10 rounded-lg transition-colors group cursor-pointer"
               >
                 <div className="text-red-400 font-medium text-sm">
@@ -108,7 +118,7 @@ export function OrderBook() {
                 <div className="text-gray-300 text-sm text-center">{ask.amount.toFixed(3)} BTC</div>
                 <div className="text-gray-400 text-sm text-center">${ask.total}M</div>
                 <div className="text-right">
-                  <div 
+                  <div
                     className="h-2 bg-red-500/30 rounded-full"
                     style={{ width: `${(i + 1) * 12}%` }}
                   ></div>

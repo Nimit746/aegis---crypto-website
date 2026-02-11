@@ -9,7 +9,7 @@ import AIInsights from "@/components/dashboard/AIInsights";
 import {
   Cpu, Brain, Activity, TrendingUp, Zap, Users, Twitter,
   Clock, MessageSquare, ArrowUpRight, Shield, Database,
-  TrendingDown, DollarSign, AlertCircle, RefreshCw
+  TrendingDown, DollarSign, AlertCircle, RefreshCw, Loader2
 } from "lucide-react";
 
 const API_BASE = 'http://localhost:8000/api/v1';
@@ -128,6 +128,16 @@ export default function Dashboard() {
   const getChangeColor = (change: number) => {
     return change >= 0 ? 'text-green-400' : 'text-red-400';
   };
+
+  if (!hasMounted) {
+    return (
+      <div className="min-h-screen bg-gray-950 flex flex-col items-center justify-center">
+        <Loader2 className="w-12 h-12 animate-spin text-green-400 mb-4" />
+        <h1 className="text-xl font-bold text-white">Aegis Intelligence</h1>
+        <p className="text-gray-400 mt-2">Initializing secure connection...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-950 p-4 md:p-6">

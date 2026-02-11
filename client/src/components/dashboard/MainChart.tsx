@@ -56,42 +56,44 @@ export function MainChart() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [lastUpdated, setLastUpdated] = useState('');
+  const [hasMounted, setHasMounted] = useState(false);
 
   const fetchChartData = async (tf: string) => {
     setLoading(true);
     setError('');
-    
+
     try {
       const response = await fetch(`${API_BASE}/chart/btc-usdt?timeframe=${tf}`);
-      
+
       if (!response.ok) {
         throw new Error(`Failed to fetch ${tf} data`);
       }
-      
+
       const data: ChartResponse = await response.json();
       setChartData(data);
-      setLastUpdated(new Date().toLocaleTimeString([], { 
-        hour: '2-digit', 
+      setLastUpdated(new Date().toLocaleTimeString([], {
+        hour: '2-digit',
         minute: '2-digit',
         second: '2-digit'
       }));
-      
+
     } catch (err) {
       console.error('Chart error:', err);
       setError(err instanceof Error ? err.message : 'Connection error');
     } finally {
       setLoading(false);
+      setHasMounted(true);
     }
   };
 
   useEffect(() => {
     fetchChartData(timeframe);
-    
+
     // Auto-refresh every 30 seconds
     const interval = setInterval(() => {
       fetchChartData(timeframe);
     }, 30000);
-    
+
     return () => clearInterval(interval);
   }, [timeframe]);
 
@@ -117,7 +119,7 @@ export function MainChart() {
     return `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`;
   };
 
-  if (loading && !chartData) {
+  if ((loading && !chartData) || !hasMounted) {
     return (
       <div className="h-[350px] flex flex-col items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-green-400 mb-2" />
@@ -130,7 +132,7 @@ export function MainChart() {
   const chartConfig = chartData ? {
     labels: chartData.data.map((point, index) => {
       const date = new Date(point.timestamp);
-      
+
       if (timeframe === '1H' || timeframe === '4H') {
         return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       } else if (timeframe === '24H') {
@@ -147,11 +149,11 @@ export function MainChart() {
         backgroundColor: (context) => {
           const chart = context.chart;
           const { ctx, chartArea } = chart;
-          
+
           if (!chartArea) return 'transparent';
-          
+
           const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
-          
+
           if (chartData.price_change_percent >= 0) {
             gradient.addColorStop(0, 'rgba(16, 185, 129, 0.3)');
             gradient.addColorStop(0.7, 'rgba(16, 185, 129, 0.1)');
@@ -161,7 +163,7 @@ export function MainChart() {
             gradient.addColorStop(0.7, 'rgba(239, 68, 68, 0.1)');
             gradient.addColorStop(1, 'rgba(239, 68, 68, 0.01)');
           }
-          
+
           return gradient;
         },
         borderWidth: 3,
@@ -204,7 +206,7 @@ export function MainChart() {
       y: {
         position: 'right' as const,
         grid: { color: 'rgba(75, 85, 99, 0.2)' },
-        ticks: { 
+        ticks: {
           color: '#9ca3af',
           callback: (value: any) => {
             if (value >= 1000) return `$${(value / 1000).toFixed(0)}k`;
@@ -225,11 +227,10 @@ export function MainChart() {
             <span className="text-2xl font-bold">
               {chartData ? formatPrice(chartData.current_price) : '$0'}
             </span>
-            <span className={`px-2 py-1 rounded text-sm ${
-              chartData?.price_change_percent >= 0 
-                ? 'bg-green-500/20 text-green-400' 
+            <span className={`px-2 py-1 rounded text-sm ${chartData?.price_change_percent >= 0
+                ? 'bg-green-500/20 text-green-400'
                 : 'bg-red-500/20 text-red-400'
-            }`}>
+              }`}>
               {chartData ? formatChange(chartData.price_change_percent) : '+0.00%'}
               {chartData?.price_change && ` (${formatPrice(chartData.price_change)})`}
             </span>
@@ -238,7 +239,7 @@ export function MainChart() {
             <span>Source: {chartData?.source || 'Loading...'}</span>
             <span>•</span>
             <span>Updated: {lastUpdated}</span>
-            <button 
+            <button
               onClick={() => fetchChartData(timeframe)}
               className="flex items-center gap-1 text-green-400 hover:text-green-300"
             >
@@ -252,18 +253,17 @@ export function MainChart() {
             <button
               key={btn.value}
               onClick={() => setTimeframe(btn.value)}
-              className={`px-3 py-1 rounded-lg text-sm transition ${
-                timeframe === btn.value
+              className={`px-3 py-1 rounded-lg text-sm transition ${timeframe === btn.value
                   ? 'bg-green-500 text-white shadow-lg shadow-green-500/20'
                   : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-              }`}
+                }`}
             >
               {btn.label}
             </button>
           ))}
         </div>
       </div>
-      
+
       <div className="h-[350px] relative">
         {chartConfig ? (
           <>
@@ -280,16 +280,15 @@ export function MainChart() {
           </div>
         )}
       </div>
-      
+
       <div className="mt-4 flex items-center justify-between text-sm text-gray-400">
         <div>
           Timeframe: {timeframe} • Resolution: {chartData?.resolution || 'Loading...'}
         </div>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
-            <div className={`w-3 h-3 rounded-full ${
-              chartData?.price_change_percent >= 0 ? 'bg-green-400' : 'bg-red-400'
-            }`}></div>
+            <div className={`w-3 h-3 rounded-full ${chartData?.price_change_percent >= 0 ? 'bg-green-400' : 'bg-red-400'
+              }`}></div>
             <span>24h Change: {chartData ? formatChange(chartData.price_change_percent) : '+0.00%'}</span>
           </div>
         </div>
