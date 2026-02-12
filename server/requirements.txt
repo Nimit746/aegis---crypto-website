@@ -16,3 +16,4 @@ websockets
 ccxt # For fetching crypto market data
 httpx
 tensorflow
+logging
