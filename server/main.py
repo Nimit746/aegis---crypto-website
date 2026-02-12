@@ -8,7 +8,11 @@ import json
 import random
 import time
 import logging
+import os
+from dotenv import load_dotenv
 from app.ml.engine import ml_engine
+
+load_dotenv()
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -18,16 +22,19 @@ app = FastAPI(title="Aegis Crypto - Real Data API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://aegiscrypto.vercel.app"],
+    allow_origins=[
+        os.getenv("FRONTEND_URL", "https://aegiscrypto.vercel.app"),
+        "http://localhost:3000"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 # FREE APIs - NO API KEYS NEEDED
-BINANCE_API = "https://api.binance.com/api/v3"
-COINGECKO_API = "https://api.coingecko.com/api/v3"
-CRYPTOCOMPARE_API = "https://min-api.cryptocompare.com/data"
+BINANCE_API = os.getenv("BINANCE_API_URL", "https://api.binance.com/api/v3")
+COINGECKO_API = os.getenv("COINGECKO_API_URL", "https://api.coingecko.com/api/v3")
+CRYPTOCOMPARE_API = os.getenv("CRYPTOCOMPARE_API_URL", "https://min-api.cryptocompare.com/data")
 
 # Simple Cache Implementation
 cache = {

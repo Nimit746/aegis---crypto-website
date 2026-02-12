@@ -7,13 +7,12 @@ redis
 pydantic
 pydantic-settings
 python-multipart
-
 numpy
 pandas
 scikit-learn
 python-dotenv
 websockets
-ccxt # For fetching crypto market data
+ccxt
 httpx
 tensorflow
 logging

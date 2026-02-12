@@ -20,7 +20,8 @@ export function PredictionWidget() {
   const fetchPredictions = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:8000/api/v1/predictions/24h');
+      const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
+      const response = await fetch(`${API_BASE}/predictions/24h`);
       if (!response.ok) throw new Error('Failed to fetch predictions');
       const data = await response.json();
       setPredictions(data);
