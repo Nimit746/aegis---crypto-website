@@ -1,16 +1,16 @@
-fastapi==0.109.0
-uvicorn[standard]==0.27.0
-sqlalchemy==2.0.25
-asyncpg==0.29.0
-aiosqlite==0.20.0
-redis==5.0.1
-pydantic==2.5.3
-pydantic-settings==2.1.0
-python-multipart==0.0.6
+fastapi
+uvicorn[standard]
+sqlalchemy
+asyncpg
+aiosqlite
+redis
+pydantic
+pydantic-settings
+python-multipart
 
-numpy==1.26.3
-pandas==2.2.0
-scikit-learn==1.4.0
-python-dotenv==1.0.0
-websockets==12.0
-ccxt==4.2.14  # For fetching crypto market data
+numpy
+pandas
+scikit-learn
+python-dotenv
+websockets
+ccxt # For fetching crypto market data
