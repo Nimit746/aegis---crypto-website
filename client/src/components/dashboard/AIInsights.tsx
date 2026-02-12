@@ -1,7 +1,7 @@
 ﻿"use client";
 
 import React, { useState, useEffect } from 'react';
-import { Brain, TrendingUp, AlertTriangle, BarChart3, Clock, ChevronRight, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { Brain, Clock, ChevronRight, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import Link from 'next/link';
 
 interface AIInsight {
@@ -21,12 +21,42 @@ const AIInsights = () => {
   ]);
 
   const [hasMounted, setHasMounted] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  const fetchAIInsights = async () => {
+    try {
+      const API_BASE = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1').replace(/\/$/, '');
+      const response = await fetch(`${API_BASE}/ai/insights`);
+      if (!response.ok) throw new Error('Failed to fetch AI insights');
+      const data = await response.json();
+
+      if (data.insights) {
+        // Map backend insights to component format
+        const mappedInsights: AIInsight[] = data.insights.map((item: { id: number, title: string, confidence: number, sentiment?: string }) => ({
+          id: item.id,
+          title: item.title,
+          confidence: item.confidence,
+          impact: item.confidence > 80 ? 'high' : 'medium',
+          time: 'Just now',
+          signal: item.sentiment || 'neutral'
+        }));
+        setInsights(mappedInsights);
+      }
+    } catch (err) {
+      console.error('AIInsights fetch error:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     setHasMounted(true);
+    fetchAIInsights();
+    const interval = setInterval(fetchAIInsights, 60000); // Every minute
+    return () => clearInterval(interval);
   }, []);
 
-  if (!hasMounted) return <div className="animate-pulse h-48 bg-gray-900/50 rounded-lg"></div>;
+  if (!hasMounted || loading) return <div className="animate-pulse h-48 bg-gray-900/50 rounded-lg"></div>;
 
   const getImpactColor = (impact: 'high' | 'medium' | 'low') => {
     switch (impact) {

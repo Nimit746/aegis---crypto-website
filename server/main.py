@@ -57,6 +57,7 @@ async def root():
     }
 
 @app.get("/api/v1/market/overview")
+@app.get("/market/overview") # Legacy alias
 async def get_market_overview():
     """Get REAL market data with 30s caching"""
     current_time = time.time()
@@ -138,6 +139,7 @@ async def get_market_overview():
         }
 
 @app.get("/api/v1/chart/btc-usdt")
+@app.get("/chart/btc-usdt") # Legacy alias
 async def get_btc_chart(timeframe: str = Query("24H")):
     """Get REAL or realistic BTC chart data with 60s caching"""
     current_time = time.time()
@@ -219,6 +221,7 @@ def generate_fallback_chart(timeframe):
     }
 
 @app.get("/api/v1/orderbook/btc-usdt")
+@app.get("/orderbook/btc-usdt") # Legacy alias
 async def get_orderbook():
     """Get order book data with 10s caching"""
     current_time = time.time()
@@ -245,6 +248,7 @@ async def get_orderbook():
         return {"bids": [], "asks": [], "spread": 0, "timestamp": datetime.now().isoformat(), "source": "mock"}
 
 @app.get("/api/v1/ai/insights")
+@app.get("/ai/insights") # Legacy alias
 async def get_ai_insights():
     """AI insights with 5min caching"""
     current_time = time.time()
@@ -293,6 +297,7 @@ async def get_ai_insights():
     return result
 
 @app.get("/api/v1/predictions/24h")
+@app.get("/predictions/24h") # Legacy alias
 async def get_predictions(symbol: str = Query("BTC")):
     """AI predictions using ML models with 1min caching"""
     current_time = time.time()

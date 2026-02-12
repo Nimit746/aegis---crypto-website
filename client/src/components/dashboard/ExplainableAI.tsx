@@ -1,7 +1,7 @@
 ﻿"use client";
 
-import { Twitter, Activity, BarChart3, Cpu, TrendingUp, AlertCircle } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { Twitter, Activity, BarChart3, Cpu, AlertCircle } from 'lucide-react';
+import { useState, useEffect, useCallback } from 'react';
 
 export function ExplainableAI() {
   const insights = [
@@ -51,12 +51,56 @@ export function ExplainableAI() {
   ];
 
   const [hasMounted, setHasMounted] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [dynamicInsights, setDynamicInsights] = useState(insights);
+  const [recommendation, setRecommendation] = useState({
+    signal: "BUY",
+    target: "$64,800",
+    stopLoss: "$63,500"
+  });
+
+  const fetchAIInsights = useCallback(async () => {
+    try {
+      const API_BASE = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1').replace(/\/$/, '');
+      const response = await fetch(`${API_BASE}/ai/insights`);
+      if (!response.ok) throw new Error('Failed to fetch AI insights');
+      const data = await response.json();
+
+      if (data.market_stats) {
+        setRecommendation({
+          signal: data.market_stats.buy_pressure > 60 ? "BUY" : data.market_stats.buy_pressure < 40 ? "SELL" : "NEUTRAL",
+          target: `$${data.market_stats.next_resistance.toLocaleString()}`,
+          stopLoss: `$${(data.market_stats.next_resistance * 0.95).toLocaleString()}`
+        });
+
+        // Update the 3rd insight (Volume & Liquidity) with real stats
+        const updatedInsights = [...insights];
+        updatedInsights[2] = {
+          ...updatedInsights[2],
+          description: `Buy-side dominance of ${data.market_stats.buy_pressure}% detected in current session.`,
+          details: [
+            `Buy pressure: ${data.market_stats.buy_pressure}%`,
+            `Sell pressure: ${data.market_stats.sell_pressure}%`,
+            `Risk Score: ${data.market_stats.risk_score}`
+          ]
+        };
+        setDynamicInsights(updatedInsights);
+      }
+    } catch (err) {
+      console.error('ExplainableAI fetch error:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, [insights]);
 
   useEffect(() => {
     setHasMounted(true);
-  }, []);
+    fetchAIInsights();
+    const interval = setInterval(fetchAIInsights, 60000);
+    return () => clearInterval(interval);
+  }, [fetchAIInsights]);
 
-  if (!hasMounted) return <div className="animate-pulse h-64 bg-gray-900/50 rounded-lg"></div>;
+  if (!hasMounted || loading) return <div className="animate-pulse h-64 bg-gray-900/50 rounded-lg"></div>;
 
   const getColorClasses = (color: string) => {
     switch (color) {
@@ -85,7 +129,7 @@ export function ExplainableAI() {
 
       {/* Insights Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {insights.map((insight) => {
+        {dynamicInsights.map((insight) => {
           const Icon = insight.icon;
           const colorClasses = getColorClasses(insight.color);
 
@@ -158,8 +202,8 @@ export function ExplainableAI() {
           <div>
             <div className="font-bold text-white text-sm mb-1">AI Recommendation</div>
             <p className="text-sm text-gray-300">
-              Based on current analysis, the AI suggests a <span className="text-green-400 font-medium">BUY signal</span> with
-              target at $64,800 and stop-loss at $63,500. Expected volatility: Medium.
+              Based on current analysis, the AI suggests a <span className={`font-medium ${recommendation.signal === 'BUY' ? 'text-green-400' : recommendation.signal === 'SELL' ? 'text-red-400' : 'text-yellow-400'}`}>{recommendation.signal} signal</span> with
+              target at {recommendation.target} and stop-loss at {recommendation.stopLoss}. Expected volatility: Medium.
             </p>
           </div>
         </div>

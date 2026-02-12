@@ -1,7 +1,7 @@
 ﻿"use client";
 
 import { useState, useEffect } from 'react';
-import { Zap, TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { TrendingUp, TrendingDown, ArrowUpRight } from 'lucide-react';
 
 export function OrderBook() {
   const [bids, setBids] = useState([
@@ -26,13 +26,43 @@ export function OrderBook() {
     { price: 64251.60, amount: 1.320, total: 84.8 }
   ]);
 
+  const [spread, setSpread] = useState(2.16);
+  const [marketPrice, setMarketPrice] = useState(64231.50);
+  const [loading, setLoading] = useState(true);
   const [hasMounted, setHasMounted] = useState(false);
+
+  const fetchOrderBook = async () => {
+    try {
+      const API_BASE = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1').replace(/\/$/, '');
+      const response = await fetch(`${API_BASE}/orderbook/btc-usdt`);
+      if (!response.ok) throw new Error('Failed to fetch orderbook');
+      const data = await response.json();
+
+      if (data.bids && data.bids.length > 0) {
+        setBids(data.bids);
+        setMarketPrice(data.bids[0].price);
+      }
+      if (data.asks && data.asks.length > 0) {
+        setAsks(data.asks);
+      }
+      if (data.spread) {
+        setSpread(data.spread);
+      }
+    } catch (err) {
+      console.error('OrderBook fetch error:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     setHasMounted(true);
+    fetchOrderBook();
+    const interval = setInterval(fetchOrderBook, 10000); // Update every 10s
+    return () => clearInterval(interval);
   }, []);
 
-  if (!hasMounted) {
+  if (!hasMounted || loading) {
     return <div className="animate-pulse h-64 bg-gray-900/50 rounded-lg"></div>;
   }
 
@@ -42,7 +72,7 @@ export function OrderBook() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div className="p-3 bg-gray-800/30 rounded-lg">
           <div className="text-xs text-gray-400 mb-1">Market Price</div>
-          <div className="text-xl font-bold text-white">$64,231.50</div>
+          <div className="text-xl font-bold text-white">${marketPrice.toLocaleString()}</div>
           <div className="text-xs text-green-400 flex items-center gap-1 mt-1">
             <ArrowUpRight className="w-3 h-3" />
             +2.41% today
@@ -57,7 +87,7 @@ export function OrderBook() {
 
         <div className="p-3 bg-gray-800/30 rounded-lg">
           <div className="text-xs text-gray-400 mb-1">Spread</div>
-          <div className="text-xl font-bold text-yellow-400">2.16</div>
+          <div className="text-xl font-bold text-yellow-400">{spread.toFixed(2)}</div>
           <div className="text-xs text-gray-400 mt-1">0.003% of price</div>
         </div>
       </div>

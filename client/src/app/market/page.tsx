@@ -19,7 +19,9 @@ export default function MarketPage() {
   const fetchMarketData = async () => {
     try {
       setRefreshing(true);
-      const response = await fetch('http://localhost:8000/api/v1/market/stats');
+      const API_BASE = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1').replace(/\/$/, '');
+      const response = await fetch(`${API_BASE}/market/overview`); // Changed to match standardized endpoint
+
       const data = await response.json();
       setMarketData(data);
     } catch (error) {
