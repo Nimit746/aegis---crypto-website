@@ -4,11 +4,29 @@ import { useState, useEffect } from "react";
 import { ArrowUp, ArrowDown, BarChart3, DollarSign, Activity, RefreshCw, PieChart } from "lucide-react";
 
 interface MarketData {
-  btc: { price: number; change: number; dominance: number };
-  eth: { price: number; change: number };
-  market_cap: number;
-  total_volume: number;
-  fear_greed: number;
+  btc: {
+    price: number;
+    change_24h: number;
+    high: number;
+    low: number;
+    volume: number;
+    source: string;
+  };
+  eth: {
+    price: number;
+    change_24h: number;
+    high: number;
+    low: number;
+    volume: number;
+    source: string;
+  };
+  total_market_cap: number;
+  btc_dominance: number;
+  fear_greed: {
+    index: number;
+    status: string;
+    source: string;
+  };
 }
 
 export default function MarketPage() {
@@ -19,8 +37,8 @@ export default function MarketPage() {
   const fetchMarketData = async () => {
     try {
       setRefreshing(true);
-      const API_BASE = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1').replace(/\/$/, '');
-      const response = await fetch(`${API_BASE}/market/overview`); // Changed to match standardized endpoint
+      const API_BASE = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000').replace(/\/$/, '');
+      const response = await fetch(`${API_BASE}/api/v1/market/overview`); // Changed to match standardized endpoint
 
       const data = await response.json();
       setMarketData(data);
@@ -28,11 +46,11 @@ export default function MarketPage() {
       console.error('Failed to fetch market data:', error);
       // Fallback data
       setMarketData({
-        btc: { price: 64258.12, change: 2.41, dominance: 45.2 },
-        eth: { price: 3525.44, change: 1.80 },
-        market_cap: 2807000000000,
-        total_volume: 43700000000,
-        fear_greed: 68
+        btc: { price: 64258.12, change_24h: 2.41, high: 65000, low: 63500, volume: 32800000000, source: 'fallback' },
+        eth: { price: 3525.44, change_24h: 1.80, high: 3600, low: 3450, volume: 14500000000, source: 'fallback' },
+        total_market_cap: 2807000000000,
+        btc_dominance: 45.2,
+        fear_greed: { index: 68, status: "Greed", source: "fallback" }
       });
     } finally {
       setLoading(false);
@@ -100,7 +118,7 @@ export default function MarketPage() {
               <div>
                 <p className="text-gray-400 text-sm">Total Market Cap</p>
                 <p className="text-3xl font-bold">
-                  ${marketData?.market_cap ? (marketData.market_cap / 1e9).toFixed(1) + 'B' : '2.8T'}
+                  ${marketData?.total_market_cap ? (marketData.total_market_cap / 1e12).toFixed(1) + 'T' : '2.8T'}
                 </p>
               </div>
               <DollarSign className="w-8 h-8 text-green-400/50" />
@@ -111,9 +129,9 @@ export default function MarketPage() {
           <div className="glass-panel p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-400 text-sm">24h Volume</p>
+                <p className="text-gray-400 text-sm">24h BTC Volume</p>
                 <p className="text-3xl font-bold">
-                  ${marketData?.total_volume ? (marketData.total_volume / 1e9).toFixed(1) + 'B' : '43.7B'}
+                  ${marketData?.btc?.volume ? (marketData.btc.volume / 1e9).toFixed(1) + 'B' : '43.7B'}
                 </p>
               </div>
               <Activity className="w-8 h-8 text-blue-400/50" />
@@ -126,7 +144,7 @@ export default function MarketPage() {
               <div>
                 <p className="text-gray-400 text-sm">BTC Dominance</p>
                 <p className="text-3xl font-bold">
-                  {marketData?.btc?.dominance || 45.2}%
+                  {marketData?.btc_dominance || 45.2}%
                 </p>
               </div>
               <PieChart className="w-8 h-8 text-yellow-400/50" />
@@ -139,14 +157,15 @@ export default function MarketPage() {
               <div>
                 <p className="text-gray-400 text-sm">Fear & Greed</p>
                 <p className="text-3xl font-bold">
-                  {marketData?.fear_greed || 68}/100
+                  {marketData?.fear_greed?.index || 68}/100
                 </p>
               </div>
               <BarChart3 className="w-8 h-8 text-purple-400/50" />
             </div>
-            <div className="mt-2 text-xs text-green-400">Greed</div>
+            <div className="mt-2 text-xs text-green-400">{marketData?.fear_greed?.status || 'Greed'}</div>
           </div>
         </div>
+
 
         {/* BTC & ETH Cards */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
@@ -162,9 +181,9 @@ export default function MarketPage() {
                   <p className="text-sm text-gray-400">BTC/USDT</p>
                 </div>
               </div>
-              <div className={`flex items-center ${(marketData?.btc?.change ?? 0) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                {(marketData?.btc?.change ?? 0) >= 0 ? <ArrowUp className="w-4 h-4" /> : <ArrowDown className="w-4 h-4" />}
-                <span className="ml-1">{(marketData?.btc?.change ?? 0) >= 0 ? '+' : ''}{marketData?.btc?.change ?? 2.41}%</span>
+              <div className={`flex items-center ${(marketData?.btc?.change_24h ?? 0) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                {(marketData?.btc?.change_24h ?? 0) >= 0 ? <ArrowUp className="w-4 h-4" /> : <ArrowDown className="w-4 h-4" />}
+                <span className="ml-1">{(marketData?.btc?.change_24h ?? 0) >= 0 ? '+' : ''}{marketData?.btc?.change_24h ?? 2.41}%</span>
               </div>
             </div>
             <div className="text-3xl font-bold mb-2">
@@ -185,9 +204,9 @@ export default function MarketPage() {
                   <p className="text-sm text-gray-400">ETH/USDT</p>
                 </div>
               </div>
-              <div className={`flex items-center ${(marketData?.eth?.change ?? 0) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                {(marketData?.eth?.change ?? 0) >= 0 ? <ArrowUp className="w-4 h-4" /> : <ArrowDown className="w-4 h-4" />}
-                <span className="ml-1">{(marketData?.eth?.change ?? 0) >= 0 ? '+' : ''}{marketData?.eth?.change ?? 1.80}%</span>
+              <div className={`flex items-center ${(marketData?.eth?.change_24h ?? 0) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                {(marketData?.eth?.change_24h ?? 0) >= 0 ? <ArrowUp className="w-4 h-4" /> : <ArrowDown className="w-4 h-4" />}
+                <span className="ml-1">{(marketData?.eth?.change_24h ?? 0) >= 0 ? '+' : ''}{marketData?.eth?.change_24h ?? 1.80}%</span>
               </div>
             </div>
             <div className="text-3xl font-bold mb-2">
