@@ -14,3 +14,4 @@ scikit-learn
 python-dotenv
 websockets
 ccxt # For fetching crypto market data
+httpx
